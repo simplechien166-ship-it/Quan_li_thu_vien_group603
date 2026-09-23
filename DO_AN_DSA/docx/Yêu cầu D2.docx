@@ -1,0 +1,187 @@
+BÁO CÁO D2 – CẤU TRÚC DỮ LIỆU VÀ GIẢI THUẬT 
+(DASA230179)
+Giảng viên phụ trách: Thầy Vũ Đình Bảo
+Nhóm 	21
+Mã lớp học phần 	261DASA230179_06
+Lĩnh vực	Hệ thống quản lí thư viện 
+Thành viên	Chung Chí Bảo                   25110142
+Nguyễn Hữu Chiến             25110153
+Nguyễn Văn Minh              25110270
+Đoàn Ngọc Khánh Vy        25110404
+Xu Ying                              25110408
+Ngày 	4/9/2026
+MỤC LỤC
+I. Tổng quan về bối cảnh và mô hình vận hành	1
+1.1. Bối cảnh ứng dụng và đối tượng tương tác	1
+1.2. Mô hình luồng dữ liệu Thư viện trung tâm	2
+II. THIẾT KẾ ĐẦU VÀO, ĐẦU RA VÀ HỆ THỐNG RÀNG BUỘC	3
+2.1. Cấu trúc dữ liệu Input và nguồn dữ liệu khởi tạo	3
+2.2. Quy cách định dạng Output cho các chức năng nghiệp vụ	4
+2.3. Phân loại ràng buộc và các trường hợp biên (Edge Cases)	5
+III. ĐẶC TẢ CHI TIẾT CÁC YÊU CẦU NGHIỆP VỤ	6
+3.1. Khảo sát nhóm yêu cầu bắt buộc chung	6
+3.2. Khảo sát nhóm yêu cầu tự phát hiện	6
+IV. PHÂN TÍCH XUNG ĐỘT CẤU TRÚC DỮ LIỆU VÀ ĐỊNH HƯỚNG TRADE - OFF	7
+4.1. Nguyên nhân xung đột giữa bảng băm và yêu cầu báo cáo sắp xếp	7
+4.2. Đánh giá giả định workload hệ thống	8
+4.3. Giải pháp cấu trúc hỗn hợp (Hybrid Indexing) và chi phí Trade-off	8
+4.4. Giới hạn và điều kiện biên của phương án Trade-off	9
+V. NĂNG LỰC KIỂM CHỨNG VÀ BASELINE THỰC NGHIỆM	9
+5.1. Thiết lập quy mô và chỉ số Benchmark	9
+5.2. Xây dựng mô hình Baseline thực nghiệm	9
+VI. TỔ CHỨC THỰC HIỆN VÀ KẾT LUẬN	10
+6.1. Bảng phân công nhiệm vụ và tỷ lệ đóng góp từng thành viên	10
+6.2. Tổng kết Deliverable D2 và sẵn sàng cho giai đoạn cài đặt D3	11
+
+ 
+I. Tổng quan về bối cảnh và mô hình vận hành
+1.1. Bối cảnh ứng dụng và đối tượng tương tác
+Nhóm lựa chọn lĩnh vực Hệ thống Quản lý Thư viện và Mượn trả Sách, tập trung vào việc quản lý, khai thác tài nguyên tài liệu và tự động hóa quy trình mượn trả trong môi trường đại học. Hệ thống lưu trữ tập hợp toàn bộ danh mục sách, hồ sơ độc giả (sinh viên, cán bộ) và các giao dịch mượn trả liên quan. Các dữ liệu cốt lõi bao gồm: mã sách (ISBN), tên sách, tác giả, năm xuất bản, tổng số bản sao, số lượng sẵn có trong kho, lượt mượn tích lũy; mã độc giả, họ tên, lớp, trạng thái thẻ, tiền nợ phạt; cùng tập các phiếu mượn trả ghi nhận ngày mượn, hạn trả và ngày trả thực tế.
+Trong quá trình vận hành, dữ liệu thư viện liên tục biến động và tăng lên theo từng học kỳ, kỳ nhập học và các đợt bổ sung giáo trình mới. Người dùng không chỉ lưu trữ thông tin cố định mà còn thường xuyên thực hiện các thao tác xử lý giao dịch với tần suất cao trên tập dữ liệu lớn:
+Thủ thư (Librarian): Cần tra cứu tức thì thông tin cuốn sách hoặc hồ sơ độc giả tại quầy để thực hiện mượn/trả sách; lập phiếu mượn mới; kiểm tra số ngày trễ hạn và tính toán thu tiền phạt trực tiếp; nhập thêm các đầu sách mới bổ sung vào kho.
+Độc giả / Sinh viên (Reader): Cần tra cứu nhanh danh mục tài liệu theo tên hoặc mã sách; kiểm tra lịch sử mượn trả và tình trạng nợ phạt cá nhân; đăng ký vào hàng đợi giữ chỗ (Reservation Queue) khi đầu sách mong muốn đã hết bản sao tại quầy.
+Ban Quản lý Thư viện: Cần xuất các báo cáo thống kê chuyên sâu như danh sách độc giả quá hạn mượn sách, thống kê các đầu sách có lượt mượn cao nhất (Top 10) trong học kỳ nhằm đánh giá nhu cầu đọc và lên kế hoạch phân bổ ngân sách mua bổ sung bản sao.
+Ngoài việc tra cứu thông tin của một đối tượng cụ thể, hệ thống còn phải hỗ trợ các thao tác xử lý phức tạp như: lọc danh sách sách theo khoảng năm xuất bản, tự động khóa quyền mượn sách khi tiền phạt vượt ngưỡng quy định, và tự động gán sách cho người đăng ký tiếp theo trong hàng đợi ngay khi sách được hoàn trả.
+Vì quy mô danh mục sách và số lượng sinh viên tại các trường đại học rất lớn (hàng trăm ngàn bản ghi), hệ thống đòi hỏi các thao tác tra cứu cơ bản tại quầy phải đạt độ trễ tối thiểu O(1), đồng thời các thao tác thống kê, báo cáo phức tạp phải được tối ưu hóa cấu trúc dữ liệu để tránh tình trạng giật lag hay treo chương trình. Trong phạm vi đồ án, nhóm tập trung vào các nghiệp vụ lõi về tra cứu, quản lý mượn trả, xử lý hàng đợi và báo cáo thống kê, làm cơ sở kỹ thuật để xây dựng và cài đặt các cấu trúc dữ liệu tối ưu ở những phần tiếp theo.
+1.2. Mô hình luồng dữ liệu Thư viện trung tâm
+Hệ thống được thiết kế theo mô hình xử lý dữ liệu tập trung, chia làm 3 tầng vận hành chính từ dữ liệu đầu vào đến kết quả đầu ra:
+a) Tầng tiếp nhận dữ liệu (Input Layer): 
+Dữ liệu tĩnh: Khi chương trình khởi động, hệ thống nạp toàn bộ danh mục từ các tệp cấu trúc (books.json, readers.json, borrow_records.json) vào bộ nhớ RAM để khởi tạo các chỉ mục tra cứu.
+Dữ liệu động: Tiếp nhận các dòng lệnh thao tác trực tiếp từ Thủ thư và Sinh viên thông qua giao diện Console/CLI (như nhập mã mượn sách, trả sách, đăng ký hàng đợi).
+b) Tầng xử lý trung tâm và Lưu trữ RAM (Core Processing & Storage Layer):
+Tra cứu điểm (MC1): Dữ liệu khóa chính (MaSach, MaDocGia) được băm và truy cập trực tiếp trên Bảng băm (Hash Table) với độ phức tạp O(1).
+Xử lý hàng đợi và Phạt (YCTP_01, YCTP_02): Mỗi đầu sách quản lý một Hàng đợi liên kết (FIFO Queue) chứa danh sách độc giả chờ mượn. Khi phát sinh sự kiện trả sách, hệ thống tự động Pop độc giả đầu hàng đợi để gán sách, đồng thời tính toán số ngày trễ hạn dựa trên thời gian thực tế để tích lũy tiền phạt.
+Lọc khoảng và Báo cáo (MC2, YCTP_03): Sử dụng Cây tìm kiếm nhị phân cân bằng (AVL Tree) đánh chỉ mục theo năm xuất bản để lọc khoảng nhanh chóng, kết hợp Hàng đợi ưu tiên tối thiểu (Min-Heap K=10) để cập nhật Top 10 đầu sách mượn nhiều nhất.
+c) Tầng kết xuất kết quả (Output Layer):
+Trả về bảng thông tin chi tiết cho người dùng tại quầy mượn trả.
+Xuất các thông báo trạng thái hàng đợi và hóa đơn phạt trễ hạn.
+Ghi nhận và đồng bộ ngược dữ liệu cập nhật về các file tĩnh khi đóng chương trình để đảm bảo tính toàn vẹn dữ liệu.
+II. THIẾT KẾ ĐẦU VÀO, ĐẦU RA VÀ HỆ THỐNG RÀNG BUỘC
+2.1. Cấu trúc dữ liệu Input và nguồn dữ liệu khởi tạo
+Dữ liệu đầu vào của hệ thống được chuẩn hóa dưới dạng các thực thể lưu trữ JSON:
+Thực thể	Thuộc tính	Kiểu dữ liệu	Mô tả và quy cách dữ liệu
+Sách	ma_sach/ibsn	string	Mã địn danh duy nhất của đầu sách (khoá chính)
+	ten_sach	string	Tên đầu sách (không rỗng)
+	tac_gia	string	Tên tác giả hoặc nhóm tác giả
+	nam_xuat_ban	int	Năm xuất bản (1700 <= Năm xuất bản <= Năm hiện tại )
+	so_luong_con	int	Số sách còn sẵn trong kho (0 <= số sách <= tổng sách)
+	luot_muon	int	Số lượt mượn tích luỹ (đáp ứng YCTP_03, khởi tạo = 0)
+Độc giả	ma_ban_doc	string	Mã định danh duy nhất của độc giả/MSSV (khóa chính)
+	ho_ten	string	Họ và tên độc giả (2 đến 50 ký tự).
+	lop	string	Mã lớp / Khoa quản lý.
+	trang_thai_the	string	Trạng thái: ACTIVE (Được mượn) hoặc BLOCKED (Tạm khóa)
+	tien_no_phat	string	Số tiền phạt tích lũy chưa thanh toán
+Phiếu mượn	ma_phieu	string	Mã định danh duy nhất của phiếu mượn.
+	ma_ban_doc	string	Khóa ngoại tham chiếu tới Reader.
+	ma_sach	string	Khóa ngoại tham chiếu tới Book.
+	ngay_muon	string	Định dạng YYYY-MM-DD.
+	ngay_hen_tra	string	Định dạng YYYY-MM-DD.
+	ngay_tra_thuc_te	string	Định dạng YYYY-MM-DD (NULL khi đang mượn).
+2.2. Quy cách định dạng Output cho các chức năng nghiệp vụ
+- MC1 (Tra cứu theo mã):
+Tìm thấy: Trả về chi tiết 1 bản ghi khớp chính xác mã định danh.
+Không tìm thấy: Trả về thông báo chuẩn hóa: [ERROR 404]: Student/Book not found.
+- MC2 (Báo cáo quá hạn và lọc năm xuất bản):
+Báo cáo quá hạn: Danh sách danh sách phiếu mượn có ngay_hen_tra < ngay_hien_tai, hiển thị chi tiết số ngày quá hạn và thông tin người mượn.
+Lọc năm xuất bản: Danh sách các đầu sách có Ymin <= nam_xuat_ban <= Ymax
+- YCTP_01 (Hàng đợi mượn trước):
+Xếp hàng thành công: [SUCCESS] Độc giả <ma_ban_doc> đã vào hàng đợi cho sách <ma_sach>. Vị trí: <K>.
+Gán tự động: [AUTO-ASSIGN] Sách <ma_sach> đã trả và tự động gán cho độc giả <ma_ban_doc>.
+- YCTP_02 (Xử lý phạt và khóa thẻ):
+Chi tiết phạt: Hiển thị SoNgayTre, TienPhatMonGiaoDich, TongTienNoLuyKe.
+Thông báo khóa: [BLOCKED] Thẻ độc giả <ma_ban_doc> bị khoá do nợ phạt vượt 100.000 VNĐ.
+- YCTP_03 (Top 10 sách mượn nhiều nhất):
+Bảng xếp hạng từ 1 đến 10 chứa các cột: XepHang, MaSach, TenSach, TacGia, NamXuatBan, LuotMuon.
+2.3. Phân loại ràng buộc và các trường hợp biên (Edge Cases)
+2.3.1. Nhóm ràng buộc kho sách và định danh
+Khóa chính duy nhất: ma_sach và ma_ban_doc là duy nhất tuyệt đối.
+Bất biến số lượng: 0 <= so_luong_con <= tong_so_ban. Khi so_luong_con == 0, hệ thống từ chối lập phiếu mượn thông thường và chuyển sang luồng hàng đợi chờ mượn.
+Đồng hạng Top 10 (Tie-breaker): Trường hợp 2 đầu sách có cùng số lượt mượn, ưu tiên sách có năm xuất bản gần hơn; nếu vẫn trùng thì so sánh thứ tự bảng chữ cái ASCII của ma_sach.
+2.3.2. Nhóm ràng buộc thẻ độc giả và luồng mượn – trả
+Chặn thẻ bị khóa: Độc giả có trang_thai_the == BLOCKED không được phép tạo thêm phiếu mượn mới.
+Ràng buộc trả sách: Trả đúng hạn hoặc sớm hạn thì số tiền phạt giao dịch bằng 0 VNĐ
+Khóa thẻ tự động: Khi tổng tiền nợ phạt tích lũy >= 100.000 VNĐ, trạng thái thẻ tự động chuyển thành BLOCKED.
+2.3.3. Nhóm ràng buộc hàng đợi chờ mượn (Reservation Queue)
+Trả sách khi hàng đợi trống: Tăng so_luong_con thêm 1.
+Trả sách khi hàng đợi có người chờ: Không tăng so_luong_con, tự động Pop độc giả đứng đầu hàng đợi FIFO và khởi tạo phiếu mượn mới.
+Giới hạn hàng đợi (Queue Overflow): Đặt ngưỡng MAX_QUEUE_SIZE = 100 người/đầu sách để tránh tràn bộ nhớ RAM.
+2.3.4. Nhóm ràng buộc tương tác file và bộ nhớ RAM
+Tập dữ liệu rỗng (N = 0): Hệ thống trả về thông báo "Danh sách rỗng", không gây hiện tượng con trỏ NULL hay crash chương trình.
+Mã tìm kiếm không tồn tại: Trả về mã lỗi chuẩn hóa, không xuất dữ liệu ngẫu nhiên.
+File dữ liệu hỏng/thiếu: Hệ thống đưa ra cảnh báo lỗi tập tin và tự động khởi tạo cơ sở dữ liệu trống an toàn.
+III. ĐẶC TẢ CHI TIẾT CÁC YÊU CẦU NGHIỆP VỤ
+3.1. Khảo sát nhóm yêu cầu bắt buộc chung
+3.1.1. MC1 – Tra cứu thông tin chính xác theo mã định danh
+Mục tiêu nghiệp vụ: Tìm kiếm hồ sơ chi tiết của một đầu sách (ma_sach) hoặc độc giả (ma_ban_doc) ngay tại thời điểm tra cứu.
+Đặc điểm truy cập (Access Pattern): Exact-key lookup theo khóa chính định danh duy nhất (1  0 hoặc 1 Record).
+Tần suất thực thi: Rất cao (chiếm phần lớn tác vụ vận hành trực tiếp tại quầy thủ thư).
+Kịch bản kiểm thử: Tra cứu mã tại vị trí đầu, giữa, cuối tập dữ liệu; tra cứu mã không tồn tại; tra cứu trên các quy mô dataset 1.000, 10.000 và 100.000 bản ghi.
+3.1.2. MC2 – Lọc danh sách trễ hạn và tra cứu khoảng năm xuất bản
+Mục tiêu nghiệp vụ: Xuất danh sách các phiếu mượn quá hạn để gửi thông báo nhắc nhở, đồng thời lọc danh mục sách được xuất bản trong khoảng [Ymin, Ymax]
+Đặc điểm truy cập (Access Pattern): Multi-result Lookup & Range Query dựa trên các tiêu chí thời gian hoặc thuộc tính số học.
+Tần suất thực thi: Trung bình (thực hiện theo đợt hoặc định kỳ hàng tuần/hàng tháng).
+Kịch bản kiểm thử: Truy vấn khoảng năm hợp lệ, khoảng năm rỗng, khoảng năm bất hợp lý (Ymin > Ymax), trường hợp không có phiếu mượn quá hạn.
+3.2. Khảo sát nhóm yêu cầu tự phát hiện
+3.2.1. YCTP_01 - Hàng đợi đặt mượn trước tự động
+Mục tiêu nghiệp vụ: Quản lý danh sách sinh viên chờ mượn khi sách đã hết bản sao trong kho (so_luong_con == 0), tự động chuyển giao sách cho người đăng ký sớm nhất khi có người trả sách.
+Đặc điểm truy cập (Access Pattern): Cấu trúc hàng đợi Tuyến tính / FIFO (std::queue).
+Tiêu chí thành công: Đảm bảo nguyên tắc "đến trước - phục vụ trước", tự động gán sách và thông báo ngay khi sự kiện trả sách diễn ra.
+3.2.2. YCTP_02 – Tự động tính tiền phạt và khoá thẻ độc giả vi phạm
+Mục tiêu nghiệp vụ: Tự động hóa quá trình phạt tiền khi trả sách trễ hạn và tạm khóa quyền mượn sách đối với các độc giả vi phạm nghiêm trọng.
+Đặc điểm truy cập (Access Pattern): Logic tính toán theo công thức:
+TienPhat = max(0, SoNgayTre) * 5.000VNĐ
+Nếu TongTienNo >= 100.000VNĐ, tự động cập nhật trạng thái trang_thai_the = BLOCKED
+Tiêu chí thành công: Tính chính xác 100% tiền phạt phát sinh và ngăn chặn ngay lập tức các giao dịch mượn mới từ thẻ bị khóa.
+3.2.3. YCTP_03 – Báo cáo thống kê top 10 đầu sách được mượn nhiều nhất
+Mục tiêu nghiệp vụ: Trích xuất 10 đầu sách có lượt mượn cao nhất giúp Ban Quản lý Thư viện có căn cứ nhập bổ sung tài liệu.
+Đặc điểm truy cập (Access Pattern): Extreme / Top-K Query dựa trên trường dữ liệu luot_muon.
+Tiêu chí thành công: Trích xuất đúng 10 phần tử dẫn đầu bằng thuật toán Min-Heap K=10 với độ phức tạp thời gian O(N) tối ưu.
+IV. PHÂN TÍCH XUNG ĐỘT CẤU TRÚC DỮ LIỆU VÀ ĐỊNH HƯỚNG TRADE - OFF
+4.1. Nguyên nhân xung đột giữa bảng băm và yêu cầu báo cáo sắp xếp
+MC1 (Exact Lookup): Đòi hỏi tốc độ tra cứu tức thì theo mã định danh với độ phức tạp O(1). Bảng băm (Hash Table) là cấu trúc dữ liệu tối ưu nhất cho tác vụ này.
+MC2 và YCTP_03 (Range Query / Top-K): Bảng băm không lưu trữ dữ liệu theo thứ tự tuyến tính hay thứ tự cây. Do đó, việc thực hiện các truy vấn lọc theo khoảng năm xuất bản hoặc trích xuất danh sách sắp xếp từ Bảng băm sẽ bắt buộc phải duyệt qua toàn bộ N Bucket, làm suy giảm hiệu năng xuống O(N).
+4.2. Đánh giá giả định workload hệ thống
+Dựa trên phân tích vận hành thực tế tại Thư viện trung tâm, tần suất các tác vụ được giả định như sau:
+ 
+Vì tần suất thao tác tra cứu điểm tại quầy chiếm đa số (Frequency (MC1) >> Frequency (MC2)), việc ưu tiên cấu trúc băm cho MC1 là phương án tối ưu cho trải nghiệm người dùng tổng thể.
+4.3. Giải pháp cấu trúc hỗn hợp (Hybrid Indexing) và chi phí Trade-off
+- Giải pháp áp dụng: Sử dụng Bảng băm (Hash Table) làm cấu trúc chỉ mục chính để phục vụ MC1 đạt tốc độ O(1).
+- Xử lý tác vụ phụ:
+     	+ Với MC2 (Lọc khoảng): Duyệt tuyến tính trực tiếp trên mảng dữ liệu hoặc tận dụng tập chỉ mục băm phụ khi cần.
+     	+ Với YCTP_03 (Top 10): Sử dụng cấu trúc Min-Heap kích thước K=10 để duy trì 10 phần tử lớn nhất qua 1 lần duyệt O(N).
+- Lợi ích: Đạt hiệu năng tối đa cho 65% thao tác của hệ thống, tiết kiệm dung lượng RAM do không cần duy trì liên tục cây cân bằng phức tạp.
+- Chi phí chấp nhận: Thao tác xuất báo cáo định kỳ (MC2) sẽ tốn chi phí duyệt O(N) thay vì O(log N + K).
+4.4. Giới hạn và điều kiện biên của phương án Trade-off
+Phương án Trade-off ưu tiên Bảng băm sẽ không còn phù hợp nếu:
+a) Tần suất xuất báo cáo lọc khoảng (MC2) tăng đột biến, chiếm tỉ trọng ngang bằng hoặc lớn hơn thao tác tra cứu tại quầy.
+b) Quy mô dữ liệu vượt ngưỡng 1.000.000 bản ghi, khiến chi phí duyệt tuyến tính O(N) cho các báo cáo vượt quá ngưỡng độ trễ cho phép (> 1000 ms). Khi đó, hệ thống bắt buộc phải nâng cấp lên mô hình chỉ mục kép toàn diện (Hybrid Indexing: Hash Table kết hợp AVL Tree hoặc B-Tree).
+V. NĂNG LỰC KIỂM CHỨNG VÀ BASELINE THỰC NGHIỆM
+5.1. Thiết lập quy mô và chỉ số Benchmark
+- Các mốc quy mô dữ liệu:
+      	Base Level (1.000 bản ghi): Kiểm thử tính đúng đắn của giải thuật và logic nghiệp vụ.
+Target Level (10.000 bản ghi): Đánh giá hiệu năng vận hành trong điều kiện thực tế.
+Stress Level (100.000 bản ghi): Kiểm thử giới hạn chịu tải, mức tiêu tốn RAM và đà tăng độ trễ.
+- Chỉ số đo lường (Metrics):
+Execution Time (ms): Thời gian xử lý của thuật toán.
+Memory Usage (MB): Dung lượng bộ nhớ RAM tiêu tốn khi khởi tạo chỉ mục.
+Operation Count: Số phép so sánh / thao tác truy cập bộ nhớ thực tế.
+5.2. Xây dựng mô hình Baseline thực nghiệm
+Mô hình Baseline (chưa tối ưu) được xây dựng để làm đối chứng đo lường hiệu quả tối ưu của các cấu trúc dữ liệu chính thức:
+Yêu cầu	Giải thuật Baseline (Chưa tối ưu)	Độ phức tạp Baseline	Giải thuật Tối ưu đề xuất	Độ phức tạp Tối ưu
+MC1	Duyệt tuyến tính (Linear Search) trên Mảng	O(N)	Bảng băm (Hash Table)	O(1)
+MC2	Quét toàn bộ Mảng (Linear Scan)	O(N)	Linear Scan trên Hash / Array	O(N)
+YCTP_01	Duyệt Mảng tìm người đăng ký sớm nhất	O(N)	Hàng đợi FIFO (std::queue)	O(1)
+YCTP_02	Quét toàn bộ danh sách phiếu mượn	O(N)	Truy vấn trực tiếp theo ID qua Hash	O(1)
+YCTP_03	Sắp xếp toàn bộ mảng (QuickSort) rồi lấy Top 10	O(Nlog N)	Duyệt mảng kết hợp Min-Heap (K=10)	O(Nlog K) ~ O(N)
+VI. TỔ CHỨC THỰC HIỆN VÀ KẾT LUẬN
+6.1. Bảng phân công nhiệm vụ và tỷ lệ đóng góp từng thành viên
+STT	Họ và tên	Mã số SV	Nhiệm vụ phụ trách chính	Tỷ lệ đóng góp
+1	Nguyễn Hữu Chiến	25110153	Phụ trách MC1, thiết kế Workload, mô hình Baseline & Quản lý chung báo cáo D2	100%
+2	Chung Chí Bảo	25110142	Phụ trách MC2 (Báo cáo quá hạn và lọc khoảng năm xuất bản), xây dựng Test Cases	100%
+3	Nguyễn Văn Minh	25110270	Phụ trách YCTP_01 (Hàng đợi mượn trước FIFO) và phân tích xung đột cấu trúc	100%
+4	Đoàn Ngọc Khánh Vy	25110404	Phụ trách YCTP_02 (Tự động tính phạt và khóa thẻ), xác định các trường hợp biên	100%
+5	Xu Ying	25110408	Phụ trách YCTP_03 (Top 10 sách mượn nhiều nhất) và thiết lập dữ liệu Benchmark	100%
+6.2. Tổng kết Deliverable D2 và sẵn sàng cho giai đoạn cài đặt D3
+Báo cáo D2 đã hoàn thành toàn bộ việc mô hình hóa bài toán Quản lý Thư viện, đặc tả chi tiết 5 nhóm yêu cầu nghiệp vụ (MC1, MC2, YCTP_01, YCTP_02, YCTP_03) và xây dựng hệ thống ràng buộc chặt chẽ. Phân tích xung đột cấu trúc dữ liệu dựa trên phân bổ Workload thực tế đã làm sáng tỏ quyết định Trade-off ưu tiên bảng băm cho MC1 (O(1)) kết hợp Min-Heap cho YCTP_03 (O(N)). Đây là cơ sở lý thuyết và kiến trúc hoàn chỉnh để nhóm sẵn sàng bước vào giai đoạn D3: Cài đặt chương trình, tối ưu thuật toán và thực nghiệm Benchmark.
+
+

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Thư Viện - DSA Web UI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar { min-height: 100vh; background: #2c3e50; color: white; }
+        .sidebar .nav-link { color: #ecf0f1; padding: 12px 20px; border-radius: 8px; margin-bottom: 5px; }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover { background: #34495e; color: #3498db; }
+        .card-custom { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .badge-status-active { background-color: #2ecc71; }
+        .badge-status-blocked { background-color: #e74c3c; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Thanh Sidebar Menu bên trái -->
+        <div class="col-md-2 sidebar p-3">
+            <h4 class="text-center py-3 border-bottom"><i class="fa-solid fa-book-bookmark me-2"></i>DSA LIBRARY</h4>
+            <div class="nav flex-column nav-pills mt-3" id="v-pills-tab" role="tablist">
+                <button class="nav-link active text-start" id="tab-books" data-bs-toggle="pill" data-bs-target="#content-books" onclick="loadBooks()"><i class="fa-solid fa-book me-2"></i>Quản lý Sách (O(1))</button>
+                <button class="nav-link text-start" id="tab-readers" data-bs-toggle="pill" data-bs-target="#content-readers" onclick="loadReaders()"><i class="fa-solid fa-users me-2"></i>Độc giả (O(1))</button>
+                <button class="nav-link text-start" id="tab-top10" data-bs-toggle="pill" data-bs-target="#content-top10" onclick="loadTop10()"><i class="fa-solid fa-fire me-2"></i>Top 10 Sách Hot (Min-Heap)</button>
+                <button class="nav-link text-start" id="tab-overdue" data-bs-toggle="pill" data-bs-target="#content-overdue" onclick="loadOverdue()"><i class="fa-solid fa-triangle-exclamation me-2"></i>Cảnh báo Quá Hạn</button>
+            </div>
+        </div>
+
+        <!-- Vùng Nội dung bên phải -->
+        <div class="col-md-10 p-4">
+            <div class="tab-content">
+                
+                <!-- TAB 1: QUẢN LÝ SÁCH -->
+                <div class="tab-pane fade show active" id="content-books">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="fa-solid fa-book text-primary me-2"></i>Danh Sách Sách Trong Thư Viện</h2>
+                        <div class="d-flex gap-2">
+                            <input type="text" id="searchBookInput" class="form-control" placeholder="Nhập Mã Sách tra cứu O(1)...">
+                            <button class="btn btn-primary" onclick="searchBook()"><i class="fa-solid fa-magnifying-glass"></i> Tra cứu</button>
+                        </div>
+                    </div>
+                    <div class="card card-custom p-3">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mã Sách</th>
+                                    <th>Tên Sách</th>
+                                    <th>Tác Giả</th>
+                                    <th>Năm XB</th>
+                                    <th>Còn Lại / Tổng</th>
+                                    <th>Lượt Mượn</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 2: QUẢN LÝ ĐỘC GIẢ -->
+                <div class="tab-pane fade" id="content-readers">
+                    <h2 class="mb-4"><i class="fa-solid fa-users text-success me-2"></i>Quản Lý Độc Giả</h2>
+                    <div class="card card-custom p-3">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mã Độc Giả</th>
+                                    <th>Họ Và Tên</th>
+                                    <th>Lớp</th>
+                                    <th>Trạng Thái Thẻ</th>
+                                    <th>Tiền Nợ Phạt</th>
+                                    <th>Lịch Sử Mượn</th>
+                                </tr>
+                            </thead>
+                            <tbody id="readerTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 3: TOP 10 SÁCH HOT -->
+                <div class="tab-pane fade" id="content-top10">
+                    <h2 class="mb-4"><i class="fa-solid fa-fire text-danger me-2"></i>Top 10 Sách Mượn Nhiều Nhất (Thuật toán Min-Heap K=10)</h2>
+                    <div class="card card-custom p-3">
+                        <table class="table table-striped align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Thứ Hạng</th>
+                                    <th>Mã Sách</th>
+                                    <th>Tên Sách</th>
+                                    <th>Lượt Mượn</th>
+                                </tr>
+                            </thead>
+                            <tbody id="top10TableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 4: QUÁ HẠN -->
+                <div class="tab-pane fade" id="content-overdue">
+                    <h2 class="mb-4"><i class="fa-solid fa-triangle-exclamation text-warning me-2"></i>Báo Cáo Phiếu Mượn Quá Hạn</h2>
+                    <div class="card card-custom p-3">
+                        <div class="row g-3 align-items-center mb-3">
+                            <div class="col-auto"><label class="col-form-label fw-bold">Chọn Ngày Kiểm Tra:</label></div>
+                            <div class="col-auto"><input type="date" id="overdueCheckDate" class="form-control" value="2026-09-16"></div>
+                            <div class="col-auto"><button class="btn btn-warning" onclick="loadOverdue()">Lọc Danh Sách</button></div>
+                        </div>
+                        <table class="table table-bordered align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mã Phiếu</th>
+                                    <th>Mã Sách</th>
+                                    <th>Mã Độc Giả</th>
+                                    <th>Ngày Hẹn Trả</th>
+                                </tr>
+                            </thead>
+                            <tbody id="overdueTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = "http://localhost:8080/api";
+
+    async function loadBooks() {
+        const res = await fetch(`${API_BASE}/books`);
+        const data = await res.json();
+        let html = '';
+        data.forEach(b => {
+            html += `<tr>
+                <td><span class="badge bg-secondary">${b.ma_sach}</span></td>
+                <td class="fw-bold">${b.ten_sach}</td>
+                <td>${b.tac_gia}</td>
+                <td>${b.nam_xuat_ban}</td>
+                <td><span class="badge bg-info text-dark">${b.so_luong_con} / ${b.so_luong_tong}</span></td>
+                <td><span class="badge bg-primary">${b.luot_muon} lượt</span></td>
+            </tr>`;
+        });
+        document.getElementById('bookTableBody').innerHTML = html;
+    }
+
+    async function loadReaders() {
+        const res = await fetch(`${API_BASE}/readers`);
+        const data = await res.json();
+        let html = '';
+        data.forEach(r => {
+            const statusBadge = r.trang_thai_the === 0 
+                ? '<span class="badge badge-status-active">Hoạt động (ACTIVE)</span>' 
+                : '<span class="badge badge-status-blocked">Bị khóa (BLOCKED)</span>';
+            html += `<tr>
+                <td><span class="badge bg-secondary">${r.ma_ban_doc}</span></td>
+                <td class="fw-bold">${r.ho_ten}</td>
+                <td>${r.lop}</td>
+                <td>${statusBadge}</td>
+                <td class="text-danger fw-bold">${r.tien_no_phat.toLocaleString()} VNĐ</td>
+                <td><button class="btn btn-sm btn-outline-primary reader-history-button" data-reader-id="${r.ma_ban_doc}" data-reader-name="${r.ho_ten}" title="Xem hoặc ẩn lịch sử mượn" aria-label="Xem hoặc ẩn lịch sử mượn"><i class="fa-solid fa-chevron-down"></i></button></td>
+            </tr>`;
+        });
+        document.getElementById('readerTableBody').innerHTML = html;
+        document.getElementById('readerTableBody').onclick = event => {
+            const button = event.target.closest('.reader-history-button');
+            if (button) {
+                event.preventDefault();
+                const currentHistory = document.getElementById('readerHistoryRow');
+                if (currentHistory && currentHistory.dataset.readerId === button.dataset.readerId) {
+                    currentHistory.remove();
+                    return;
+                }
+                loadReaderBorrows(button.dataset.readerId, button.dataset.readerName, button);
+            }
+        };
+    }
+
+    async function loadReaderBorrows(readerId, readerName, button) {
+        document.getElementById('readerHistoryRow')?.remove();
+        const selectedRow = button.closest('tr');
+        const historyRow = document.createElement('tr');
+        historyRow.id = 'readerHistoryRow';
+        historyRow.dataset.readerId = readerId;
+        historyRow.innerHTML = `<td colspan="6">
+            <div class="bg-light border rounded p-3">
+                <h6 class="mb-3">Lịch sử mượn của ${readerName} (${readerId})</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered mb-0 bg-white">
+                        <thead class="table-light">
+                            <tr><th>Mã phiếu</th><th>Mã sách</th><th>Tên sách</th><th>Ngày mượn</th><th>Hạn trả</th><th>Ngày trả</th><th>Trạng thái</th></tr>
+                        </thead>
+                        <tbody id="readerBorrowBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </td>`;
+        selectedRow.insertAdjacentElement('afterend', historyRow);
+        const body = historyRow.querySelector('#readerBorrowBody');
+        let res;
+        try {
+            res = await fetch(`${API_BASE}/reader-borrows?id=${encodeURIComponent(readerId)}`);
+        } catch (error) {
+            body.innerHTML = '<tr><td colspan="7" class="text-danger">Không kết nối được Web Server.</td></tr>';
+            return;
+        }
+        if (!res.ok) {
+            body.innerHTML = '<tr><td colspan="7" class="text-danger">Không thể tải lịch sử mượn.</td></tr>';
+            return;
+        }
+
+        const data = await res.json();
+        body.innerHTML = data.length === 0
+            ? '<tr><td colspan="7" class="text-center text-muted">Sinh viên chưa có lượt mượn nào.</td></tr>'
+            : data.map(b => `<tr>
+                <td>${b.ma_phieu}</td>
+                <td>${b.ma_sach}</td>
+                <td>${b.ten_sach}</td>
+                <td>${b.ngay_muon}</td>
+                <td>${b.ngay_hen_tra}</td>
+                <td>${b.ngay_tra_thuc_te || '-'}</td>
+                <td>${b.da_tra ? '<span class="badge bg-success">Đã trả</span>' : '<span class="badge bg-warning text-dark">Đang mượn</span>'}</td>
+            </tr>`).join('');
+    }
+
+    async function loadTop10() {
+        const res = await fetch(`${API_BASE}/top10`);
+        const data = await res.json();
+        let html = '';
+        data.forEach((b, idx) => {
+            html += `<tr>
+                <td class="fw-bold text-center">#${idx + 1}</td>
+                <td><span class="badge bg-secondary">${b.ma_sach}</span></td>
+                <td class="fw-bold">${b.ten_sach}</td>
+                <td><span class="badge bg-danger fs-6">${b.luot_muon} lượt</span></td>
+            </tr>`;
+        });
+        document.getElementById('top10TableBody').innerHTML = html;
+    }
+
+    async function loadOverdue() {
+        const dateVal = document.getElementById('overdueCheckDate').value;
+        const res = await fetch(`${API_BASE}/overdue?date=${dateVal}`);
+        const data = await res.json();
+        let html = '';
+        if(data.length === 0) {
+            html = `<tr><td colspan="4" class="text-center text-muted">Không có phiếu mượn nào quá hạn!</td></tr>`;
+        } else {
+            data.forEach(o => {
+                html += `<tr>
+                    <td><span class="badge bg-warning text-dark">${o.ma_phieu}</span></td>
+                    <td>${o.ma_sach}</td>
+                    <td>${o.ma_ban_doc}</td>
+                    <td class="text-danger font-monospace">${o.ngay_hen_tra}</td>
+                </tr>`;
+            });
+        }
+        document.getElementById('overdueTableBody').innerHTML = html;
+    }
+
+    async function searchBook() {
+        const id = document.getElementById('searchBookInput').value.trim();
+        if(!id) return loadBooks();
+        const res = await fetch(`${API_BASE}/book?id=${id}`);
+        if(res.status === 404) {
+            alert('Không tìm thấy sách với mã này!');
+            return;
+        }
+        const b = await res.json();
+        document.getElementById('bookTableBody').innerHTML = `<tr>
+            <td><span class="badge bg-secondary">${b.ma_sach}</span></td>
+            <td class="fw-bold">${b.ten_sach}</td>
+            <td>${b.tac_gia}</td>
+            <td>${b.nam_xuat_ban}</td>
+            <td><span class="badge bg-info text-dark">${b.so_luong_con} / ${b.so_luong_tong}</span></td>
+            <td><span class="badge bg-primary">${b.luot_muon} lượt</span></td>
+        </tr>`;
+    }
+
+    // Nạp danh sách sách ban đầu
+    loadBooks();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

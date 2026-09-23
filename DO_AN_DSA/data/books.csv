@@ -1,0 +1,152 @@
+MaSach,TenSach,TacGia,NamXuatBan,SoLuongTong,SoLuongCon,LuotMuon
+B100,"Giáo Dục Kỹ Năng Sống","Võ Ngọc Ánh",2020,5,3,36
+B101,"Tiếng Anh Thương Mại","Nguyễn Minh Thư",2022,7,7,64
+B102,"Ngữ Pháp Tiếng Anh Thực Hành","Lê Hoàng Yến",2021,8,6,79
+B103,"Biên Phiên Dịch Cơ Bản","Trần Ngọc Mai",2023,6,6,52
+B104,"Tiếng Nhật Sơ Cấp","Phạm Nhật Linh",2020,7,5,58
+B105,"Tiếng Hàn Giao Tiếp","Nguyễn Hồng Nhung",2022,5,5,46
+B106,"Tiếng Trung Thương Mại","Đỗ Minh Anh",2021,6,4,50
+B107,"Kỹ Năng Viết Học Thuật","Vũ Thị Lan",2023,8,8,67
+B108,"Ngôn Ngữ Học Đại Cương","Hoàng Quốc Việt",2020,5,3,34
+B109,"Văn Học Việt Nam Hiện Đại","Nguyễn Thị Hằng",2022,9,9,83
+B110,"Truyện Ngắn Việt Nam","Lê Văn Phương",2021,7,5,74
+B111,"Thơ Ca Việt Nam","Trần Minh Tâm",2020,6,6,61
+B112,"Văn Học Dân Gian Việt Nam","Phạm Thị Liên",2023,8,6,69
+B113,"Lý Luận Văn Học","Nguyễn Văn Sơn",2022,5,5,43
+B114,"Lịch Sử Việt Nam Cận Đại","Đặng Quốc Toàn",2021,7,5,56
+B115,"Lịch Sử Văn Minh Thế Giới","Bùi Thị Hoa",2020,6,6,49
+B116,"Cơ Sở Văn Hóa Việt Nam","Nguyễn Quang Minh",2023,8,6,72
+B117,"Di Sản Văn Hóa Việt Nam","Trần Hữu Nam",2022,5,5,38
+B118,"Khảo Cổ Học Đại Cương","Lê Thị Ngân",2021,6,4,35
+B119,"Triết Học Mác - Lênin","Phạm Văn Lợi",2020,9,9,88
+B120,"Tư Tưởng Hồ Chí Minh","Nguyễn Đức Chính",2022,8,6,81
+B121,"Đạo Đức Học","Võ Thị Hạnh",2023,5,5,33
+B122,"Logic Học Đại Cương","Trần Anh Tuấn",2021,6,4,47
+B123,"Kiến Trúc Nhà Ở","Nguyễn Hoàng Phúc",2022,7,7,57
+B124,"Quy Hoạch Đô Thị","Lê Minh Tùng",2020,8,6,62
+B125,"Thiết Kế Nội Thất","Phạm Thanh Hà",2023,6,6,54
+B126,"Kết Cấu Công Trình","Đỗ Văn Khải",2021,7,5,66
+B127,"Vật Liệu Xây Dựng","Nguyễn Quốc Bảo",2022,8,8,59
+B128,"Kỹ Thuật Thi Công","Trần Văn Hải",2020,5,3,41
+B129,"Cấp Thoát Nước Công Trình","Huỳnh Minh Hoàng",2023,6,6,48
+B130,"Giao Thông Đô Thị","Phan Quốc Thịnh",2021,7,5,52
+B131,"Nhiếp Ảnh Cơ Bản","Nguyễn Nhật Nam",2022,5,5,45
+B132,"Lịch Sử Nghệ Thuật","Trần Thùy Dung",2020,6,4,39
+B133,"Mỹ Thuật Tạo Hình","Lê Bảo Châu",2023,7,7,43
+B134,"Âm Nhạc Lý Thuyết","Phạm Minh Quân",2021,5,3,36
+B135,"Kỹ Thuật Sân Khấu","Nguyễn Thế Vinh",2022,6,6,31
+B136,"Truyền Thông Đại Chúng","Đặng Hoài Anh",2020,8,6,65
+B137,"Báo Chí Và Biên Tập","Vũ Thanh Tùng",2023,7,7,58
+B138,"Quan Hệ Công Chúng","Nguyễn Phương Uyên",2022,6,4,61
+B139,"Sản Xuất Nội Dung Số","Lê Anh Khoa",2021,9,9,86
+B140,"Điện Ảnh Việt Nam","Trần Ngọc Sơn",2020,5,3,42
+B141,"Quản Lý Nhà Nước","Phạm Quốc Trung",2023,7,7,55
+B142,"Quản Trị Công","Nguyễn Thị Vân Anh",2022,6,4,49
+B143,"Chính Sách Công","Đỗ Hoàng Long",2021,5,5,37
+B144,"Quan Hệ Quốc Tế","Lê Thanh Bình",2020,8,6,63
+B145,"Địa Chính Trị Thế Giới","Trần Quốc Khánh",2023,7,7,68
+B146,"Kinh Tế Phát Triển","Nguyễn Mai Phương",2022,9,7,76
+B147,"Thị Trường Chứng Khoán","Phạm Hoàng Anh",2021,8,8,84
+B148,"Thương Mại Điện Tử","Võ Quốc Cường",2023,10,8,97
+B149,"Kế Toán Quản Trị","Đặng Thị Minh",2020,6,6,51
+B150,"Phân Tích Đầu Tư","Nguyễn Thành Đạt",2022,7,5,73
+B151,"Quản Trị Rủi Ro","Hoàng Minh Phát",2023,8,8,69
+B01,"C++ Primer Plus","Bjarne Stroustrup",2021,5,4,45
+B02,"Introduction to Algorithms","Thomas H. Cormen",2020,3,1,120
+B03,"Database System Concepts","Abraham Silberschatz",2022,4,3,15
+B04,"Python Crash Course","Eric Matthes",2019,10,9,89
+B05,"Computer Organization and Design","David A. Patterson",2018,2,1,67
+B06,"Operating System Concepts","Abraham Silberschatz",2023,6,5,30
+B07,"SQL Performance Explained","Marcus Winand",2021,8,7,95
+B08,"Artificial Intelligence","Stuart Russell",2022,5,4,110
+B09,"Computer Networking","Kurose Ross",2020,4,3,55
+B10,"Cybersecurity and Cyberwar","Alan T. Norman",2023,7,6,78
+B11,"Digital Image Processing","Rafael C. Gonzalez",2017,3,2,22
+B12,"Điện Tử Cơ Bản","Nguyễn Văn Hòa",2022,6,5,59
+B13,"Mạch Điện Tử","Trần Đức Huy",2021,7,7,63
+B14,"Vi Điều Khiển Và Ứng Dụng","Phạm Minh Tuấn",2023,8,8,76
+B15,"Truyền Động Điện","Đỗ Quang Huy",2020,5,4,42
+B16,"Tự Động Hóa Công Nghiệp","Nguyễn Hữu Thắng",2021,6,6,49
+B17,"Điện Năng Và Hệ Thống Điện","Đinh Xuân Lâm",2023,7,6,66
+B18,"Công Nghệ Thông Tin","Nguyễn Văn Minh",2023,10,10,84
+B19,"Cấu Trúc Dữ Liệu Và Giải Thuật","Nguyễn Văn Cường",2022,6,6,65
+B20,"Lập Trình C++ Từ Cơ Bản","Phạm Hồng Phát",2021,7,6,72
+B21,"Lập Trình Python Cho Người Mới","Bùi Văn Hiếu",2023,8,8,80
+B22,"Cơ Sở Dữ Liệu","Đỗ Hoàng Sơn",2022,9,8,88
+B23,"Mạng Máy Tính Nâng Cao","Vũ Minh Tuấn",2021,6,6,48
+B24,"An Toàn Thông Tin","Phan Thị Oanh",2023,4,4,38
+B25,"Hệ Điều Hành","Nguyễn Hoàng Sơn",2021,7,6,74
+B26,"Trí Tuệ Nhân Tạo","Nguyễn Thị Hạnh",2022,7,7,81
+B27,"Hóa Học Thực Phẩm","Nguyễn Thị Lan",2022,6,5,52
+B28,"Công Nghệ Sản Xuất Thực Phẩm","Trần Thanh Nga",2021,8,8,68
+B29,"An Toàn Thực Phẩm","Phạm Thị Hồng",2023,7,7,58
+B30,"Đánh Giá Chất Lượng Thực Phẩm","Lê Thị Mai",2020,5,4,41
+B31,"Quá Trình Và Thiết Bị Hóa Chất","Nguyễn Đình Long",2021,6,6,46
+B32,"Khoa Học Ứng Dụng Trong Công Nghệ","Đặng Văn Hùng",2023,7,6,63
+B33,"Toán Ứng Dụng Trong Kỹ Thuật","Nguyễn Huyền Trang",2022,8,8,59
+B34,"Vật Lý Ứng Dụng","Phan Văn Tài",2021,6,6,45
+B35,"Thống Kê Ứng Dụng","Hoàng Anh Dũng",2020,5,4,33
+B36,"Phân Tích Dữ Liệu Ứng Dụng","Lê Hoàng Nam",2023,9,9,73
+B37,"Nghệ Thuật Thời Trang","Trần Thị Hương",2022,5,4,40
+B38,"Marketing Du Lịch","Nguyễn Thị Ngân",2021,6,6,47
+B39,"Quản Trị Du Lịch","Huỳnh Quốc Bảo",2023,7,6,55
+B40,"Thiết Kế Thời Trang Hiện Đại","Nguyễn Thúy Vy",2022,6,6,50
+B41,"Du Lịch Bền Vững","Phạm Quốc Việt",2020,5,4,31
+B42,"Kinh Tế Vĩ Mô","Cao Thị Hạnh",2021,7,7,62
+B43,"Kinh Tế Vi Mô","Nguyễn Hữu Nam",2022,8,7,71
+B44,"Nguyên Lý Kinh Doanh","Phạm Thị Thu",2023,6,6,56
+B45,"Quản Trị Tài Chính","Trần Nam Sơn",2020,9,8,80
+B46,"Marketing Căn Bản","Nguyễn Thị Hồng",2021,5,5,36
+B47,"Cơ Khí Chế Tạo Máy","Nguyễn Văn Đức",2022,7,6,60
+B48,"Cơ Nhiệt Và Động Lực Học","Trần Văn Lộc",2021,6,6,52
+B49,"Truyền Nhiệt Và Động Lực Học","Đoàn Minh Khang",2023,8,7,68
+B50,"Cơ Khí Động Lực","Phạm Quốc Huy",2020,5,4,39
+B51,"Cơ Điện Tử Trong Cơ Khí","Nguyễn Anh Phương",2022,6,5,46
+B52,"Nhập Môn Vật Lý Học","Nguyễn Quang Huy",2021,7,5,54
+B53,"Hóa Học Đại Cương","Trần Minh Khoa",2020,8,8,61
+B54,"Sinh Học Phân Tử","Lê Thị Thanh",2022,6,3,48
+B55,"Địa Chất Học Cơ Sở","Phạm Văn Bình",2019,5,5,29
+B56,"Thiên Văn Học Cơ Bản","Đỗ Minh Quân",2023,7,4,57
+B57,"Khoa Học Môi Trường","Nguyễn Thị Hồng Vân",2021,8,8,64
+B58,"Biến Đổi Khí Hậu","Trần Quốc Dũng",2022,6,3,51
+B59,"Quản Lý Tài Nguyên Nước","Lê Hoàng Phương",2020,5,5,35
+B60,"Công Nghệ Năng Lượng Tái Tạo","Phạm Minh Khôi",2023,9,6,78
+B61,"Kỹ Thuật Môi Trường","Nguyễn Đức Thành",2021,7,7,63
+B62,"Quản Lý Chất Thải Rắn","Vũ Thị Mai",2022,6,3,44
+B63,"Sinh Thái Học Ứng Dụng","Hoàng Văn Nam",2020,5,5,38
+B64,"Đa Dạng Sinh Học Việt Nam","Nguyễn Thị Phương",2023,7,4,59
+B65,"Nông Học Đại Cương","Trần Văn Phúc",2021,8,8,67
+B66,"Kỹ Thuật Trồng Cây Ăn Quả","Lê Minh Tân",2022,6,3,46
+B67,"Công Nghệ Sau Thu Hoạch","Phạm Thị Ngọc",2023,7,7,60
+B68,"Chăn Nuôi Gia Súc","Nguyễn Văn Thành",2020,5,2,41
+B69,"Thú Y Cơ Bản","Đặng Thị Hương",2021,6,6,50
+B70,"Nuôi Trồng Thủy Sản","Huỳnh Văn Phúc",2022,8,5,58
+B71,"Y Học Cộng Đồng","Nguyễn Hoàng Nam",2023,7,7,72
+B72,"Giải Phẫu Học Người","Trần Thị Minh",2020,6,3,55
+B73,"Sinh Lý Học Người","Lê Quốc Anh",2021,5,5,43
+B74,"Dược Lý Đại Cương","Phạm Ngọc Lan",2022,7,4,69
+B75,"Hóa Dược Cơ Bản","Nguyễn Đức Minh",2023,6,6,52
+B76,"Điều Dưỡng Nội Khoa","Võ Thị Thanh",2021,8,5,66
+B77,"Dinh Dưỡng Người","Đỗ Thị Hạnh",2020,5,5,47
+B78,"Tâm Lý Học Sức Khỏe","Bùi Minh Tâm",2022,6,3,39
+B79,"Cấp Cứu Và Sơ Cứu","Nguyễn Anh Dũng",2023,7,7,73
+B80,"Vệ Sinh An Toàn Lao Động","Phan Văn Sơn",2021,6,3,45
+B81,"Pháp Luật Đại Cương","Nguyễn Thị Thu Hà",2022,9,9,82
+B82,"Luật Dân Sự Việt Nam","Trần Quốc Cường",2020,7,4,63
+B83,"Luật Thương Mại","Lê Minh Hoàng",2021,6,6,51
+B84,"Luật Lao Động","Phạm Thị Vân",2023,8,5,70
+B85,"Luật Sở Hữu Trí Tuệ","Nguyễn Văn Khang",2022,7,7,68
+B86,"Luật Hành Chính","Đỗ Ngọc Anh",2020,5,2,37
+B87,"Tư Pháp Quốc Tế","Vũ Minh Đức",2021,6,6,42
+B88,"Kỹ Năng Nghiên Cứu Pháp Lý","Hoàng Thị Yến",2023,5,2,31
+B89,"Xã Hội Học Đại Cương","Nguyễn Hữu Phước",2022,7,7,56
+B90,"Công Tác Xã Hội","Trần Thị Kim Oanh",2021,6,3,48
+B91,"Tâm Lý Học Đại Cương","Lê Văn Hùng",2020,8,8,75
+B92,"Tâm Lý Học Giáo Dục","Phạm Thùy Dương",2023,7,4,62
+B93,"Kỹ Năng Giao Tiếp","Nguyễn Thùy Linh",2022,9,9,94
+B94,"Tư Duy Phản Biện","Đặng Minh Châu",2021,8,5,87
+B95,"Kỹ Năng Làm Việc Nhóm","Bùi Quang Huy",2020,6,6,53
+B96,"Phương Pháp Giảng Dạy","Nguyễn Thị Bích",2023,7,4,59
+B97,"Giáo Dục Học","Trần Văn Thắng",2022,5,5,40
+B98,"Đo Lường Và Đánh Giá Giáo Dục","Lê Thị Hương",2021,6,4,45
+B99,"Thiết Kế Bài Giảng Điện Tử","Phạm Hoài Nam",2023,8,8,71
