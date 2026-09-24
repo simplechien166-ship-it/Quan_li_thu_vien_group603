@@ -1,8 +1,47 @@
 #include "../include/httplib.h"
 #include <iostream>
 #include <string>
+#include <thread>
+#include <chrono>
 
 using namespace std;
+
+// Test rate limiting: tra ve so luong fail (0 neu PASS)
+int test_rate_limit(httplib::Client& cli) {
+    std::cout << "--- Nhom 4: Rate Limiting ---\n";
+
+    // Da dong comment 2 dong timeout vi phien ban httplib nay khong ho tro
+    // cli.set_connection_timeout_sec(3);
+    // cli.set_read_timeout_sec(3);
+
+    int last_status = 0;
+    int got_429_at = -1;
+    httplib::Headers hdrs = { {"Connection", "close"} }; // force close per request to avoid connection reuse
+    for (int i = 0; i < 105; i++) {
+        std::cout << "Sending request #" << (i + 1) << "...\n";
+        auto res = cli.Get("/api/books", hdrs);
+        if (!res) {
+            std::cout << "[FAIL] Request #" << i + 1 << " - khong co phan hoi (timeout hay loi ket noi)\n";
+            return 1; // treat as failure
+        }
+        last_status = res->status;
+        if (res->status == 429) {
+            got_429_at = i + 1;
+            break; // early exit on rate limit triggered
+        }
+        // Nho cho mot chut de khong flood qua nhanh (tuỳ server)
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    if (got_429_at != -1) {
+        std::cout << "[PASS] Sau " << got_429_at << " request, server tra ve 429 (rate limit)\n";
+        return 0;
+    }
+    else {
+        std::cout << "[FAIL] Khong co 429 sau 105 request, status cuoi = " << last_status << "\n";
+        return 1;
+    }
+}
 
 // Kiem tra 1 endpoint, tra ve true neu dung status code mong doi, nguoc lai false
 bool test_endpoint(httplib::Client& cli, const char* path, int expected_status = 200) {
@@ -59,13 +98,19 @@ int main() {
     cout << "=== BAT DAU KIEM THU WEB API (DO AN DSA) ===\n";
     cout << "(Yeu cau web_server.exe dang chay san o localhost:8080)\n\n";
 
-    httplib::Client cli("localhost", 8080);
-  
+    httplib::Client cli("127.0.0.1", 8080);
+
+    // Da dong comment 2 dong timeout
+    // cli.set_connection_timeout_sec(3);
+    // cli.set_read_timeout_sec(3);
 
     int total_failures = 0;
     total_failures += test_api_lists(cli);
     total_failures += test_api_book_lookup(cli);
     total_failures += test_api_reader_borrows(cli);
+
+    // Goi ham test gioi han request - tra ve 0 neu PASS, 1 neu FAIL
+    total_failures += test_rate_limit(cli);
 
     cout << "=== HOAN TAT KIEM THU ===\n";
     if (total_failures == 0) {
