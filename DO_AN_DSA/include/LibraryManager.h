@@ -9,6 +9,7 @@
 
 #include <string>
 #include <vector>
+#include <shared_mutex>
 
 class LibraryManager {
 private:
@@ -21,6 +22,7 @@ private:
     CustomHashTable<ReservationQueue*> reservationMap;
 
     std::string dataDir;
+    mutable std::shared_mutex mtx; // bảo vệ trạng thái nội bộ cho thread-safety
 
     // Các hàm bổ trợ xử lý ngày tháng (YYYY-MM-DD)
     static bool isValidDate(const std::string& dateStr);

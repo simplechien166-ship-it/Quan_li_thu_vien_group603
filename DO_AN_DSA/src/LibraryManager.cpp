@@ -3,10 +3,12 @@
 #include <iomanip>
 #include <ctime>
 #include <unordered_map>
+#include <shared_mutex>
 
 LibraryManager::LibraryManager(const std::string& dataDirectory) : dataDir(dataDirectory) {}
 
 LibraryManager::~LibraryManager() {
+    std::unique_lock<std::shared_mutex> lock(mtx);
     // Giải phóng bộ nhớ động của các Hàng đợi ReservationQueue
     auto queues = reservationMap.getAllValues();
     for (auto* qPtr : queues) {
@@ -67,6 +69,7 @@ int LibraryManager::calculateOverdueDays(const std::string& dueDateStr, const st
 }
 
 bool LibraryManager::loadAllData() {
+    std::unique_lock<std::shared_mutex> lock(mtx);
     bool b = PersistenceManager::loadBooks(dataDir + "books.csv", bookTable);
     bool r = PersistenceManager::loadReaders(dataDir + "readers.csv", readerTable);
     borrowList.clear();
@@ -103,6 +106,7 @@ bool LibraryManager::loadAllData() {
 }
 
 bool LibraryManager::saveAllData() {
+    std::unique_lock<std::shared_mutex> lock(mtx);
     synchronizeInventoryWithBorrows();
     bool b = PersistenceManager::saveBooks(dataDir + "books.csv", bookTable);
     bool r = PersistenceManager::saveReaders(dataDir + "readers.csv", readerTable);
@@ -127,6 +131,7 @@ void LibraryManager::synchronizeInventoryWithBorrows() {
 }
 
 bool LibraryManager::addBook(const Book& book) {
+    std::unique_lock<std::shared_mutex> lock(mtx);
     bookTable.insert(book.ma_sach, book);
     if (reservationMap.search(book.ma_sach) == nullptr) {
         ReservationQueue* q = new ReservationQueue();
@@ -136,27 +141,33 @@ bool LibraryManager::addBook(const Book& book) {
 }
 
 Book* LibraryManager::findBook(const std::string& ma_sach) {
+    std::shared_lock<std::shared_mutex> lock(mtx);
     return bookTable.search(ma_sach);
 }
 
 std::vector<Book*> LibraryManager::getAllBooks() {
+    std::shared_lock<std::shared_mutex> lock(mtx);
     return bookTable.getAllValues();
 }
 
 bool LibraryManager::addReader(const Reader& reader) {
+    std::unique_lock<std::shared_mutex> lock(mtx);
     readerTable.insert(reader.ma_ban_doc, reader);
     return true;
 }
 
 Reader* LibraryManager::findReader(const std::string& ma_ban_doc) {
+    std::shared_lock<std::shared_mutex> lock(mtx);
     return readerTable.search(ma_ban_doc);
 }
 
 std::vector<Reader*> LibraryManager::getAllReaders() {
+    std::shared_lock<std::shared_mutex> lock(mtx);
     return readerTable.getAllValues();
 }
 
 ReservationQueue* LibraryManager::getReservationQueue(const std::string& ma_sach) {
+    std::shared_lock<std::shared_mutex> lock(mtx);
     ReservationQueue** qPtr = reservationMap.search(ma_sach);
     return (qPtr != nullptr) ? *qPtr : nullptr;
 }
@@ -210,6 +221,21 @@ std::string LibraryManager::returnBook(const std::string& ma_phieu, const std::s
         return "LỖI: Ngày trả thực tế không hợp lệ.";
     }
 
+    // Đọc và xác thực dưới shared lock
+    {
+        std::shared_lock<std::shared_mutex> readLock(mtx);
+        size_t* recordIndex = borrowIndex.search(ma_phieu);
+        if (recordIndex == nullptr || *recordIndex >= borrowList.size() || borrowList[*recordIndex].da_tra) {
+            return "LỖI: Không tìm thấy Phiếu mượn hợp lệ hoặc phiếu đã được trả!";
+        }
+        if (dateToDays(ngay_tra_thuc_te) < dateToDays(borrowList[*recordIndex].ngay_muon)) {
+            return "LỖI: Ngày trả không được trước ngày mượn.";
+        }
+    }
+
+    // Chuyển sang exclusive lock để thay đổi
+    std::unique_lock<std::shared_mutex> writeLock(mtx);
+
     BorrowRecord* record = nullptr;
     size_t* recordIndex = borrowIndex.search(ma_phieu);
     if (recordIndex != nullptr && *recordIndex < borrowList.size() && !borrowList[*recordIndex].da_tra) {
@@ -225,8 +251,8 @@ std::string LibraryManager::returnBook(const std::string& ma_phieu, const std::s
     record->da_tra = true;
     record->ngay_tra_thuc_te = ngay_tra_thuc_te;
 
-    Book* book = findBook(record->ma_sach);
-    Reader* reader = findReader(record->ma_ban_doc);
+    Book* book = bookTable.search(record->ma_sach);
+    Reader* reader = readerTable.search(record->ma_ban_doc);
 
     std::string resultMsg = "Trả sách thành công.";
 
@@ -276,6 +302,7 @@ std::string LibraryManager::returnBook(const std::string& ma_phieu, const std::s
 
 // Báo cáo danh sách quá hạn (MC2)
 std::vector<BorrowRecord> LibraryManager::getOverdueList(const std::string& currentDateStr) {
+    std::shared_lock<std::shared_mutex> lock(mtx);
     std::vector<BorrowRecord> overdueList;
     for (const auto& br : borrowList) {
         if (!br.da_tra) {
@@ -289,6 +316,7 @@ std::vector<BorrowRecord> LibraryManager::getOverdueList(const std::string& curr
 }
 
 std::vector<BorrowRecord> LibraryManager::getBorrowsByReader(const std::string& ma_ban_doc) {
+    std::shared_lock<std::shared_mutex> lock(mtx);
     std::vector<BorrowRecord> readerBorrows;
     for (const auto& borrow : borrowList) {
         if (borrow.ma_ban_doc == ma_ban_doc) {
@@ -303,7 +331,7 @@ std::vector<Book> LibraryManager::getBooksByYearRange(int minYear, int maxYear) 
     if (minYear > maxYear) {
         return filteredBooks;
     }
-
+    std::shared_lock<std::shared_mutex> lock(mtx);
     auto books = bookTable.getAllValues();
     for (const auto* book : books) {
         if (book != nullptr && book->nam_xuat_ban >= minYear && book->nam_xuat_ban <= maxYear) {
